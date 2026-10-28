@@ -1,0 +1,716 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Business Manager</title>
+
+<style>
+:root {
+    --cream: #FBF7F0;
+    --paper: #FFFFFF;
+    --brown: #493528;
+    --muted: #8C7B6D;
+    --border: #E8DED0;
+    --green: #56715A;
+    --red: #A44F45;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--brown);
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background: var(--paper);
+    border-bottom: 1px solid var(--border);
+    padding: 22px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.logo {
+    font-family: Georgia, serif;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: var(--muted);
+    font-size: 12px;
+    display: block;
+    margin-top: 5px;
+    font-family: Arial, sans-serif;
+    font-weight: normal;
+}
+
+main {
+    max-width: 1100px;
+    margin: 35px auto;
+    padding: 0 20px;
+}
+
+h1, h2 {
+    font-family: Georgia, serif;
+    font-weight: normal;
+}
+
+h1 {
+    font-size: 36px;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: var(--muted);
+    margin-bottom: 28px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.stat, .panel {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.stat-value {
+    font-size: 27px;
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.panel {
+    margin-bottom: 24px;
+}
+
+.panel h2 {
+    margin-top: 0;
+    font-size: 24px;
+}
+
+form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field label {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+input, select {
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #FFFEFC;
+    color: var(--brown);
+    font: inherit;
+}
+
+input:focus, select:focus {
+    outline: 2px solid #C7AF96;
+    outline-offset: 1px;
+}
+
+.full {
+    grid-column: 1 / -1;
+}
+
+button {
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font: inherit;
+}
+
+.primary {
+    background: var(--brown);
+    color: white;
+}
+
+.primary:hover {
+    background: #6A4C38;
+}
+
+.filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.filters input, .filters select {
+    flex: 1;
+}
+
+.order-list {
+    display: grid;
+    gap: 12px;
+}
+
+.order {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    background: #FFFEFC;
+}
+
+.order h3 {
+    margin: 0 0 7px;
+    font-size: 16px;
+}
+
+.order p {
+    margin: 4px 0;
+    color: var(--muted);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.order-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.order-price {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.status {
+    font-size: 12px;
+    padding: 6px 9px;
+    border-radius: 20px;
+    background: #F1E7D9;
+}
+
+.status.completed {
+    background: #E4EEE3;
+    color: var(--green);
+}
+
+.status.cancelled {
+    background: #F6E5E1;
+    color: var(--red);
+}
+
+.order-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.order-actions select {
+    width: auto;
+    max-width: 145px;
+    padding: 8px;
+    font-size: 12px;
+}
+
+.delete {
+    color: var(--red);
+    background: #F9ECE9;
+    padding: 8px 10px;
+    font-size: 12px;
+}
+
+.empty {
+    color: var(--muted);
+    text-align: center;
+    padding: 30px 10px;
+}
+
+.note {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 18px;
+}
+
+footer {
+    text-align: center;
+    color: var(--muted);
+    padding: 25px;
+    font-size: 12px;
+}
+
+@media (max-width: 650px) {
+    header {
+        padding: 18px 20px;
+    }
+
+    main {
+        margin-top: 24px;
+        padding: 0 14px;
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .stat {
+        padding: 16px;
+    }
+
+    .stat-value {
+        font-size: 23px;
+    }
+
+    form {
+        grid-template-columns: 1fr;
+    }
+
+    .full {
+        grid-column: auto;
+    }
+
+    .filters {
+        flex-direction: column;
+    }
+
+    .order {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .order-right {
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .order-actions {
+        width: 100%;
+    }
+
+    .order-actions select {
+        flex: 1;
+        max-width: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        MINI BUSINESS
+        <span>ORDER MANAGER</span>
+    </div>
+    <div id="today"></div>
+</header>
+
+<main>
+    <h1>Мои заказы</h1>
+    <p class="subtitle">Всё о твоём маленьком бизнесе — в одном месте.</p>
+
+    <section class="stats">
+        <div class="stat">
+            <div class="stat-label">Всего заказов</div>
+            <div class="stat-value" id="totalOrders">0</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">В работе</div>
+            <div class="stat-value" id="activeOrders">0</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Сумма выполненных заказов</div>
+            <div class="stat-value" id="totalIncome">0 MDL</div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Добавить заказ</h2>
+
+        <form id="orderForm">
+            <div class="field">
+                <label for="customer">Имя клиента</label>
+                <input id="customer" required maxlength="80"
+                    placeholder="Например, Амина">
+            </div>
+
+            <div class="field">
+                <label for="product">Товар или услуга</label>
+                <input id="product" required maxlength="100"
+                    placeholder="Например, дизайн логотипа">
+            </div>
+
+            <div class="field">
+                <label for="price">Цена (MDL)</label>
+                <input id="price" type="number" required
+                    min="0.01" max="100000000" step="0.01"
+                    placeholder="250">
+            </div>
+
+            <div class="field">
+                <label for="status">Статус заказа</label>
+                <select id="status">
+                    <option value="new">Новый</option>
+                    <option value="working">В работе</option>
+                    <option value="completed">Выполнен</option>
+                    <option value="cancelled">Отменён</option>
+                </select>
+            </div>
+
+            <button class="primary full" type="submit">
+                + Добавить заказ
+            </button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>Список заказов</h2>
+
+        <div class="filters">
+            <input id="search" type="search"
+                placeholder="Поиск по клиенту или товару...">
+
+            <select id="filterStatus" aria-label="Фильтр по статусу">
+                <option value="all">Все статусы</option>
+                <option value="new">Новые</option>
+                <option value="working">В работе</option>
+                <option value="completed">Выполнены</option>
+                <option value="cancelled">Отменены</option>
+            </select>
+        </div>
+
+        <div id="orderList" class="order-list"></div>
+
+        <p class="note">
+            Данные сохраняются в браузере на этом устройстве.
+            Экспортируй резервную копию, чтобы не потерять заказы
+            при очистке данных браузера.
+        </p>
+
+        <button id="exportButton" class="primary" type="button">
+            Скачать резервную копию
+        </button>
+
+        <button id="importButton" type="button">
+            Восстановить из копии
+        </button>
+        <input id="importFile" type="file"
+            accept=".json,application/json" hidden>
+    </section>
+</main>
+
+<footer>
+    MINI BUSINESS MANAGER · Локальное приложение
+</footer>
+
+<script>
+const STORAGE_KEY = "miniBusinessManagerOrders";
+
+const statusNames = {
+    new: "Новый",
+    working: "В работе",
+    completed: "Выполнен",
+    cancelled: "Отменён"
+};
+
+let orders = loadOrders();
+
+document.getElementById("today").textContent =
+    new Date().toLocaleDateString("ru-RU", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+
+function loadOrders() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        const data = saved ? JSON.parse(saved) : [];
+
+        if (!Array.isArray(data)) return [];
+        return data.filter(order =>
+            order &&
+            typeof order.id === "string" &&
+            typeof order.customer === "string" &&
+            typeof order.product === "string" &&
+            Number.isFinite(order.price) &&
+            order.price >= 0 &&
+            Object.hasOwn(statusNames, order.status)
+        );
+    } catch {
+        return [];
+    }
+}
+
+function saveOrders() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+        return true;
+    } catch {
+        alert("Не удалось сохранить данные. Скачай резервную копию и освободи место в браузере.");
+        return false;
+    }
+}
+
+function makeElement(tag, className, text) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (text !== undefined) element.textContent = text;
+    return element;
+}
+
+function money(amount) {
+    return amount.toLocaleString("ru-RU", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+    }) + " MDL";
+}
+
+function renderStats() {
+    document.getElementById("totalOrders").textContent =
+        orders.length;
+
+    document.getElementById("activeOrders").textContent =
+        orders.filter(order =>
+            order.status === "new" || order.status === "working"
+        ).length;
+
+    const income = orders
+        .filter(order => order.status === "completed")
+        .reduce((sum, order) => sum + order.price, 0);
+
+    document.getElementById("totalIncome").textContent =
+        money(income);
+}
+
+function renderOrders() {
+    const list = document.getElementById("orderList");
+    const search = document.getElementById("search").value
+        .trim().toLowerCase();
+    const filter = document.getElementById("filterStatus").value;
+
+    list.replaceChildren();
+
+    const visibleOrders = [...orders].reverse().filter(order => {
+        const matchesSearch =
+            order.customer.toLowerCase().includes(search) ||
+            order.product.toLowerCase().includes(search);
+
+        return matchesSearch &&
+            (filter === "all" || order.status === filter);
+    });
+
+    if (visibleOrders.length === 0) {
+        list.appendChild(makeElement(
+            "p",
+            "empty",
+            orders.length === 0
+                ? "Пока заказов нет. Добавь свой первый заказ выше."
+                : "Заказы не найдены."
+        ));
+        return;
+    }
+
+    for (const order of visibleOrders) {
+        const card = makeElement("article", "order");
+        const details = makeElement("div");
+        const title = makeElement("h3", "", order.customer);
+        const product = makeElement("p", "", order.product);
+        const date = makeElement("p", "", order.date);
+
+        details.append(title, product, date);
+
+        const right = makeElement("div", "order-right");
+        const price = makeElement("div", "order-price", money(order.price));
+        const status = makeElement(
+            "span",
+            "status " + order.status,
+            statusNames[order.status]
+        );
+
+        const actions = makeElement("div", "order-actions");
+        const select = document.createElement("select");
+        select.setAttribute("aria-label", "Изменить статус заказа");
+
+        for (const [value, label] of Object.entries(statusNames)) {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = label;
+            option.selected = order.status === value;
+            select.appendChild(option);
+        }
+
+        select.addEventListener("change", () => {
+            const previous = order.status;
+            order.status = select.value;
+
+            if (!saveOrders()) {
+                order.status = previous;
+            }
+
+            render();
+        });
+
+        const deleteButton = makeElement("button", "delete", "Удалить");
+        deleteButton.type = "button";
+        deleteButton.addEventListener("click", () => {
+            if (!confirm("Удалить этот заказ?")) return;
+
+            const oldOrders = orders;
+            orders = orders.filter(item => item.id !== order.id);
+
+            if (!saveOrders()) {
+                orders = oldOrders;
+            }
+
+            render();
+        });
+
+        actions.append(select, deleteButton);
+        right.append(price, status, actions);
+        card.append(details, right);
+        list.appendChild(card);
+    }
+}
+
+function render() {
+    renderStats();
+    renderOrders();
+}
+
+document.getElementById("orderForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const customer = document.getElementById("customer").value.trim();
+    const product = document.getElementById("product").value.trim();
+    const price = Number(document.getElementById("price").value);
+    const status = document.getElementById("status").value;
+
+    if (!customer || !product || !Number.isFinite(price) ||
+        price <= 0 || price > 100000000 ||
+        !Object.hasOwn(statusNames, status)) {
+        alert("Проверь имя клиента, товар и цену.");
+        return;
+    }
+
+    const order = {
+        id: crypto.randomUUID
+            ? crypto.randomUUID()
+            : Date.now().toString() + Math.random().toString(16).slice(2),
+        customer,
+        product,
+        price,
+        status,
+        date: new Date().toLocaleDateString("ru-RU")
+    };
+
+    orders.push(order);
+
+    if (!saveOrders()) {
+        orders.pop();
+        return;
+    }
+
+    event.target.reset();
+    render();
+});
+
+document.getElementById("search").addEventListener("input", renderOrders);
+document.getElementById("filterStatus").addEventListener("change", renderOrders);
+
+document.getElementById("exportButton").addEventListener("click", () => {
+    const file = new Blob(
+        [JSON.stringify(orders, null, 2)],
+        { type: "application/json" }
+    );
+
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "mini-business-backup.json";
+    link.click();
+    URL.revokeObjectURL(url);
+});
+
+document.getElementById("importButton").addEventListener("click", () => {
+    document.getElementById("importFile").click();
+});
+
+document.getElementById("importFile").addEventListener("change", async event => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+        const imported = JSON.parse(await file.text());
+
+        if (!Array.isArray(imported) || !imported.every(order =>
+            order &&
+            typeof order.id === "string" &&
+            typeof order.customer === "string" &&
+            typeof order.product === "string" &&
+            Number.isFinite(order.price) &&
+            order.price > 0 &&
+            Object.hasOwn(statusNames, order.status) &&
+            typeof order.date === "string"
+        )) {
+            throw new Error("Invalid backup");
+        }
+
+        if (!confirm("Заменить текущие заказы данными из копии?")) return;
+
+        const previousOrders = orders;
+        orders = imported;
+
+        if (!saveOrders()) {
+            orders = previousOrders;
+        }
+
+        render();
+    } catch {
+        alert("Не удалось прочитать копию. Выбери корректный JSON-файл.");
+    } finally {
+        event.target.value = "";
+    }
+});
+
+render();
+</script>
+
+</body>
+</html>

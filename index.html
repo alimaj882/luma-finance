@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luma Finance</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 30px 16px;
+      font-family: Arial, sans-serif;
+      background: #F7F4FF;
+      color: #33284D;
+    }
+
+    .app {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h1 {
+      margin-bottom: 6px;
+      color: #7963B8;
+    }
+
+    .subtitle {
+      color: #827795;
+      margin-top: 0;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 22px;
+      margin-top: 18px;
+      box-shadow: 0 5px 20px #33284D0A;
+    }
+
+    .balance {
+      font-size: 36px;
+      font-weight: bold;
+      margin: 12px 0;
+      overflow-wrap: anywhere;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .income {
+      color: #32815B;
+      background: #E8F5ED;
+    }
+
+    .expense {
+      color: #C05266;
+      background: #FCEBEC;
+    }
+
+    .stat {
+      padding: 15px;
+      border-radius: 14px;
+    }
+
+    .amount {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 8px;
+      overflow-wrap: anywhere;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 7px;
+      font-weight: bold;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 13px;
+      border-radius: 11px;
+      font-size: 16px;
+    }
+
+    input, select {
+      border: 1px solid #DDD5EF;
+      background: white;
+      color: #33284D;
+    }
+
+    button {
+      margin-top: 16px;
+      border: none;
+      background: #7963B8;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #66509F;
+    }
+
+    .transaction {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid #EEEAF5;
+    }
+
+    .transaction:last-child {
+      border-bottom: none;
+    }
+
+    .delete {
+      width: auto;
+      margin: 0;
+      padding: 8px 12px;
+      background: #FCEBEC;
+      color: #C05266;
+      font-size: 13px;
+    }
+
+    .empty {
+      color: #827795;
+      text-align: center;
+      padding: 15px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <h1>✿ Luma Finance</h1>
+    <p class="subtitle">Твои деньги под контролем</p>
+
+    <section class="card">
+      <div>Общий баланс</div>
+      <div class="balance" id="balance">0,00 лей</div>
+
+      <div class="summary">
+        <div class="stat income">
+          Доходы
+          <div class="amount" id="income">0,00 лей</div>
+        </div>
+
+        <div class="stat expense">
+          Расходы
+          <div class="amount" id="expense">0,00 лей</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Новая операция</h2>
+
+      <form id="form">
+        <label for="description">Название</label>
+        <input id="description" placeholder="Например, карманные деньги" required maxlength="80">
+
+        <label for="amount">Сумма (лей)</label>
+        <input id="amount" type="number" min="0.01" max="1000000000" step="0.01" placeholder="0,00" required>
+
+        <label for="type">Тип операции</label>
+        <select id="type">
+          <option value="income">Доход</option>
+          <option value="expense">Расход</option>
+        </select>
+
+        <button type="submit">+ Добавить операцию</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>История операций</h2>
+      <div id="transactions">
+        <p class="empty">Здесь пока пусто ✿</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("form");
+    const descriptionInput = document.getElementById("description");
+    const amountInput = document.getElementById("amount");
+    const typeInput = document.getElementById("type");
+
+    const balanceElement = document.getElementById("balance");
+    const incomeElement = document.getElementById("income");
+    const expenseElement = document.getElementById("expense");
+    const transactionsElement = document.getElementById("transactions");
+
+    const transactions = [];
+
+    function formatMoney(amount) {
+      return amount.toLocaleString("ru-RU", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }) + " лей";
+    }
+
+    function render() {
+      let income = 0;
+      let expense = 0;
+
+      for (const transaction of transactions) {
+        if (transaction.type === "income") {
+          income += transaction.amount;
+        } else {
+          expense += transaction.amount;
+        }
+      }
+
+      balanceElement.textContent = formatMoney(income - expense);
+      incomeElement.textContent = formatMoney(income);
+      expenseElement.textContent = formatMoney(expense);
+
+      transactionsElement.replaceChildren();
+
+      if (transactions.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "empty";
+        empty.textContent = "Здесь пока пусто ✿";
+        transactionsElement.append(empty);
+        return;
+      }
+
+      for (let i = transactions.length - 1; i >= 0; i--) {
+        const transaction = transactions[i];
+        const row = document.createElement("div");
+        row.className = "transaction";
+
+        const info = document.createElement("div");
+        const name = document.createElement("div");
+        const amount = document.createElement("div");
+
+        name.textContent = transaction.description;
+        amount.textContent =
+          (transaction.type === "income" ? "+" : "−") +
+          formatMoney(transaction.amount);
+
+        amount.style.color =
+          transaction.type === "income" ? "#32815B" : "#C05266";
+
+        info.append(name, amount);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "delete";
+        deleteButton.textContent = "Удалить";
+
+        deleteButton.addEventListener("click", () => {
+          transactions.splice(i, 1);
+          render();
+        });
+
+        row.append(info, deleteButton);
+        transactionsElement.append(row);
+      }
+    }
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const description = descriptionInput.value.trim();
+      const amount = Number(amountInput.value);
+
+      if (!description || !Number.isFinite(amount) || amount <= 0 || amount > 1000000000) {
+        alert("Проверь название и сумму операции.");
+        return;
+      }
+
+      transactions.push({
+        description: description,
+        amount: Math.round(amount * 100) / 100,
+        type: typeInput.value
+      });
+
+      form.reset();
+      descriptionInput.focus();
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
